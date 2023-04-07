@@ -1,8 +1,4 @@
-import { FormikErrors } from 'formik';
-import {
-  ERoles,
-  EWorkBorders,
-} from './page-components/Formik/FormikCreateUser';
+import { ERoles, EWorkBorders } from './page-components/exportConst';
 
 export interface IUser {
   username: string;
@@ -10,11 +6,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   role: ERoles[];
-  workBorders:
-    | EWorkBorders[]
-    | FormikErrors<EWorkBorders>[]
-    | string
-    | string[];
+  workBorders: EWorkBorders[];
   id: number;
 }
 

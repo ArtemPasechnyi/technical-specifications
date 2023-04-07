@@ -11,6 +11,7 @@ interface ISelectView extends FieldProps {
   isMulti?: boolean;
   className?: string;
   placeholder?: string;
+  defaultValue?: any;
 }
 
 export const SelectView = ({
@@ -19,6 +20,7 @@ export const SelectView = ({
   field,
   form,
   options,
+  defaultValue,
   isMulti = false,
 }: ISelectView) => {
   const onChange = (option: any) => {
@@ -30,29 +32,15 @@ export const SelectView = ({
     );
   };
 
-  const getValue = () => {
-    if (options) {
-      return isMulti
-        ? options.filter(
-            (option: { value: any }) => field.value.indexOf(option.value) >= 0
-          )
-        : options.find(
-            (option: { value: any }) => option.value === field.value
-          );
-    } else {
-      return isMulti ? [] : ('' as any);
-    }
-  };
-
   return (
     <Select
       className={className}
       name={field.name}
-      value={getValue()}
       onChange={onChange}
       placeholder={placeholder}
       options={options}
       isMulti={isMulti}
+      defaultValue={defaultValue}
     />
   );
 };
