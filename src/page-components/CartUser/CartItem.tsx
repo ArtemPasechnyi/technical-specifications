@@ -1,4 +1,6 @@
+import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
 import { IUser } from '../../locaStorage';
 
 interface ICartUser {
@@ -25,6 +27,11 @@ export const CartItem = (props: ICartUser) => {
           <strong>Фамилия: </strong>
           {lastName}
         </Card.Text>
+        <Link to={`/form?id=${id}`} style={{ float: 'right' }}>
+          <Button variant="outline-primary" size="sm">
+            Обновить
+          </Button>
+        </Link>
       </Card.Body>
     </Card>
   );

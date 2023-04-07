@@ -6,10 +6,20 @@ import { FormikCreateUser } from './page-components/Formik/FormikCreateUser';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SnackbarProvider } from 'notistack';
+import { getUserById } from './locaStorage';
+
+const loader = (props: any) => {
+  const { request } = props;
+  const url = new URL(request.url);
+  const id = Number(url.searchParams.get('id'));
+  const currentUser = getUserById(id);
+
+  return { currentUser };
+};
 
 const router = createBrowserRouter([
   { path: '/', element: <UserList /> },
-  { path: '/form', element: <FormikCreateUser /> },
+  { path: '/form', element: <FormikCreateUser />, loader },
 ]);
 
 const root = ReactDOM.createRoot(
