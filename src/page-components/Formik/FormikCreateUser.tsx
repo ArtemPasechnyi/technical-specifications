@@ -1,5 +1,6 @@
 import { Paper } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
+import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import MultiSelect from 'react-select';
@@ -81,6 +82,9 @@ export const FormikCreateUser = () => {
           setTimeout(() => {
             createUserStorage(values);
             routToMainPage();
+            enqueueSnackbar('Профиль успешно создан', {
+              variant: 'success',
+            });
             setSubmitting(false);
           }, 400);
         }}

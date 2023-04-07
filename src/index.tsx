@@ -5,6 +5,7 @@ import { UserList } from './page-components/CartUser/UserList';
 import { FormikCreateUser } from './page-components/Formik/FormikCreateUser';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { SnackbarProvider } from 'notistack';
 
 const router = createBrowserRouter([
   { path: '/', element: <UserList /> },
@@ -16,7 +17,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <SnackbarProvider maxSnack={5} autoHideDuration={4000}>
+      <RouterProvider router={router} />
+    </SnackbarProvider>
   </React.StrictMode>
 );
 
