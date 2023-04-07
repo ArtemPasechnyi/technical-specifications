@@ -25,7 +25,7 @@ export const SelectView = ({
     form.setFieldValue(
       field.name,
       isMulti
-        ? (option as Option[]).map((item: Option) => item.value || item.value)
+        ? (option as Option[]).map((item: Option) => item.value)
         : (option as Option).value
     );
   };
@@ -43,10 +43,6 @@ export const SelectView = ({
       return isMulti ? [] : ('' as any);
     }
   };
-
-  console.log('getValue()', getValue());
-
-  console.log('onChange', onChange);
 
   return (
     <Select
