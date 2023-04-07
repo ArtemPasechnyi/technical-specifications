@@ -7,12 +7,12 @@ interface ICartUser {
 
 export const CartItem = (props: ICartUser) => {
   const { user } = props;
-  const { firstName, lastName, username } = user;
+  const { firstName, lastName, username, id } = user;
 
   return (
-    <Card style={{ width: '18rem' }}>
+    <Card style={{ width: '18rem', margin: '20px' }}>
       <Card.Body>
-        <Card.Title>Карточка юзера</Card.Title>
+        <Card.Title>Карточка юзера №{id}</Card.Title>
         <Card.Text>
           <strong>Username: </strong>
           {username}

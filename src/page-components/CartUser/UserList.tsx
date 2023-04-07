@@ -13,6 +13,11 @@ export const UserList = () => {
     value.firstName.toLowerCase().startsWith(query.toLowerCase())
   );
 
+  const handleClear = () => {
+    localStorage.removeItem('userStorage');
+    location.reload();
+  };
+
   return !users.length ? (
     <div className={styles.root}>
       <h2 className={styles.item}>Список пользователей пустой</h2>
@@ -23,13 +28,20 @@ export const UserList = () => {
     </div>
   ) : (
     <div className={styles.listRoot}>
+      <div className="form-group d-flex justify-content-between">
+        <Link to={`/form`}>
+          <Button>Добавить нового пользователя</Button>
+        </Link>
+        <Button onClick={handleClear}>Удалить весь спиисок</Button>
+      </div>
+
+      <hr />
       <Search setQuery={setQuery} query={query} />
-      {searchUsers.map((user, index) => {
-        return <CartItem user={user} key={index} />;
-      })}
-      <Link to={`/form`}>
-        <Button>Добавить нового пользователя</Button>
-      </Link>
+      <div className="row justify-content-start pt-2 margin-20">
+        {searchUsers.map((user, index) => {
+          return <CartItem user={user} key={index} />;
+        })}
+      </div>
     </div>
   );
 };

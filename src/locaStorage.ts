@@ -40,8 +40,7 @@ export const createUserStorage = (user: IUser) => {
     userStorage = [];
   }
 
-  const index = userStorage.length - 1;
-  const userId = !userStorage.length ? 1 : userStorage[index].id + 1;
+  const userId = !userStorage.length ? 1 : userStorage[0].id + 1;
 
   user.id = userId;
 
