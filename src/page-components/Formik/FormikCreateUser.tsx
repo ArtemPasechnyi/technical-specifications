@@ -70,7 +70,6 @@ export const FormikCreateUser = () => {
       <Formik
         initialValues={{
           username: '',
-          name: '',
           password: '',
           firstName: '',
           lastName: '',
