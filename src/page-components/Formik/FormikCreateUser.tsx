@@ -2,7 +2,13 @@ import { Paper } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import {
+  createUserStorage,
+  deleteUser,
+  IUser,
+  updateUser,
+} from '../../locaStorage';
 import { createUserStorage } from '../../locaStorage';
 import styles from './Formik.module.css';
 import { SelectView } from './SelectView';
@@ -59,32 +65,45 @@ const errorComponent = (error: string | string[]) => {
   return <div className="invalid-feedback d-block">{error}</div>;
 };
 
-export const FormikCreateUser = () => {
-  const rout = useNavigate();
+interface ICurrenUser {
+  currentUser: IUser;
+}
 
+export const FormikCreateUser = () => {
+  const { currentUser } = useLoaderData() as ICurrenUser;
+  const rout = useNavigate();
   const routToMainPage = () => {
     rout('/');
   };
 
+  const clearUser: IUser = {
+    username: '',
+    password: '',
+    firstName: '',
+    lastName: '',
+    role: [ERoles.ANT],
+    id: 1,
+    workBorders: [],
+  };
+
+  const user = currentUser || clearUser;
+
   return (
     <>
       <Formik
-        initialValues={{
-          username: '',
-          password: '',
-          firstName: '',
-          lastName: '',
-          role: [],
-          id: 1,
-          workBorders: [],
-        }}
+        initialValues={user}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            createUserStorage(values);
+            currentUser ? updateUser(values) : createUserStorage(values);
             routToMainPage();
-            enqueueSnackbar('Профиль успешно создан', {
-              variant: 'success',
-            });
+            enqueueSnackbar(
+              currentUser
+                ? 'Профиль успешно обновлен'
+                : 'Профиль успешно создан',
+              {
+                variant: 'success',
+              }
+            );
             setSubmitting(false);
           }, 400);
         }}
@@ -170,8 +189,23 @@ export const FormikCreateUser = () => {
 
                 <div className="form-group d-flex justify-content-between">
                   <Button variant="outline-primary" type="submit" size="sm">
-                    Создать
+                    {currentUser ? 'Обновить' : 'Создать'}
                   </Button>
+                  {currentUser && (
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={() => {
+                        deleteUser(user.id);
+                        routToMainPage();
+                        enqueueSnackbar('Пользователь успешно удалён', {
+                          variant: 'success',
+                        });
+                      }}
+                    >
+                      Удалить
+                    </Button>
+                  )}
                   <Link to={`/`} style={{ float: 'right' }}>
                     <Button variant="outline-primary" size="sm">
                       Вернуться к списку
