@@ -1,0 +1,17 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-direction: column;
+}
+
+.listRoot {
+  margin: 20px;
+}
+
+.item {
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+}
