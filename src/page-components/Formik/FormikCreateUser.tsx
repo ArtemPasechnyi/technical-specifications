@@ -3,9 +3,9 @@ import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import MultiSelect from 'react-select';
 import { createUserStorage } from '../../locaStorage';
 import styles from './Formik.module.css';
+import { SelectView } from './SelectView';
 
 export enum ERoles {
   ANT = 'ant',
@@ -46,14 +46,14 @@ const validateString = (value: string, count: number) => {
   return error;
 };
 
-// const validateArr = (value: string[]) => {
-//   let error;
-//   if (!value.length) {
-//     error = 'Обязательное поле';
-//   }
+const validateArr = (value: string[]) => {
+  let error;
+  if (!value.length) {
+    error = 'Обязательное поле';
+  }
 
-//   return error;
-// };
+  return error;
+};
 
 const errorComponent = (error: string | string[]) => {
   return <div className="invalid-feedback d-block">{error}</div>;
@@ -130,29 +130,31 @@ export const FormikCreateUser = () => {
                 </div>
                 <div className="form-group">
                   <Field
-                    defaultValue={[roleOptions[0]]}
-                    isMulti
-                    component={MultiSelect}
-                    options={roleOptions}
-                    placeholder="Роли"
+                    className="custom-select"
                     name="role"
-                    // validate={(value: string[]) => validateArr(value)}
+                    options={roleOptions}
+                    component={SelectView}
+                    placeholder="Роли"
+                    isMulti={true}
+                    validate={(value: string[]) => validateArr(value)}
                   />
-                  {/* {errors.role && touched.role && errorComponent(errors.role)} */}
+                  {errors.role && touched.role && errorComponent(errors.role)}
                 </div>
                 <div className="form-group">
                   <Field
+                    className="custom-select"
                     name="workBorders"
-                    placeholder="Место работы"
-                    isMulti
-                    component={MultiSelect}
                     options={workBordersOptions}
-                    // validate={(value: string[]) => validateArr(value)}
+                    component={SelectView}
+                    placeholder="Место работы"
+                    isMulti={true}
+                    validate={(value: string[]) => validateArr(value)}
                   />
-                  {/* {errors.workBorders &&
+                  {errors.workBorders &&
                     touched.workBorders &&
-                    errorComponent(errors.workBorders)} */}
+                    errorComponent(errors.workBorders)}
                 </div>
+
                 <div className="form-group">
                   <Field
                     className="form-control"
@@ -167,12 +169,7 @@ export const FormikCreateUser = () => {
                 </div>
 
                 <div className="form-group d-flex justify-content-between">
-                  <Button
-                    variant="outline-primary"
-                    type="submit"
-                    size="sm"
-                    // disabled={!!errors}
-                  >
+                  <Button variant="outline-primary" type="submit" size="sm">
                     Создать
                   </Button>
                   <Link to={`/`} style={{ float: 'right' }}>
