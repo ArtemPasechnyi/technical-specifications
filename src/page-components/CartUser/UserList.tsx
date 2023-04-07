@@ -32,7 +32,7 @@ export const UserList = () => {
         <Link to={`/form`}>
           <Button>Добавить нового пользователя</Button>
         </Link>
-        <Button onClick={handleClear}>Удалить весь спиисок</Button>
+        <Button onClick={handleClear}>Удалить весь список</Button>
       </div>
 
       <hr />

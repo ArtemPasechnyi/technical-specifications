@@ -21,7 +21,7 @@ export const Search = (props: ISearch) => {
         sx={{ ml: 1, flex: 1 }}
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Поиск по имени (firstName)"
+        placeholder="Поиск по имени"
         size="medium"
       />
       {!!query.length && (

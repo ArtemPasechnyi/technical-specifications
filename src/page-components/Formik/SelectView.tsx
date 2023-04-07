@@ -7,7 +7,7 @@ interface Option {
 }
 
 interface ISelectView extends FieldProps {
-  options?: any;
+  options: any;
   isMulti?: boolean;
   className?: string;
   placeholder?: string;
@@ -25,7 +25,7 @@ export const SelectView = ({
     form.setFieldValue(
       field.name,
       isMulti
-        ? (option as Option[]).map((item: Option) => item.value)
+        ? (option as Option[]).map((item: Option) => item.value || item.value)
         : (option as Option).value
     );
   };
@@ -34,7 +34,7 @@ export const SelectView = ({
     if (options) {
       return isMulti
         ? options.filter(
-            (option: { value: any }) => field.value?.indexOf(option.value) >= 0
+            (option: { value: any }) => field.value.indexOf(option.value) >= 0
           )
         : options.find(
             (option: { value: any }) => option.value === field.value
@@ -44,12 +44,15 @@ export const SelectView = ({
     }
   };
 
+  console.log('getValue()', getValue());
+
+  console.log('onChange', onChange);
+
   return (
     <Select
       className={className}
       name={field.name}
       value={getValue()}
-      defaultValue={[options[2], options[3]]}
       onChange={onChange}
       placeholder={placeholder}
       options={options}

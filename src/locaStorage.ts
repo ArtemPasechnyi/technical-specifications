@@ -34,20 +34,9 @@ export const getUserStorage = () => {
 };
 
 export const createUserStorage = (user: IUser) => {
-  let userStorage: IUser[] = [];
-  try {
-    const stringifiedUsers = localStorage.getItem('userStorage');
-
-    if (stringifiedUsers !== null) {
-      userStorage = JSON.parse(stringifiedUsers);
-    }
-  } catch (e) {
-    userStorage = [];
-  }
-
-  const userId = !userStorage.length ? 1 : userStorage[0].id + 1;
-
-  user.id = userId;
+  const userStorage = getUserStorage();
+  const id = !userStorage.length ? 1 : userStorage[0].id + 1;
+  user.id = id;
 
   userStorage.unshift(user);
 
@@ -61,17 +50,7 @@ export const getUserById = (id: number) => {
 };
 
 export const deleteUser = (id: number) => {
-  let userStorage: IUser[] = [];
-  try {
-    const stringifiedUsers = localStorage.getItem('userStorage');
-
-    if (stringifiedUsers !== null) {
-      userStorage = JSON.parse(stringifiedUsers);
-    }
-  } catch (e) {
-    userStorage = [];
-  }
-
+  const userStorage = getUserStorage();
   const userIndex = userStorage.findIndex((user) => user.id === id);
 
   userStorage.splice(userIndex, 1);
@@ -81,16 +60,7 @@ export const deleteUser = (id: number) => {
 
 export const updateUser = (user: IUser) => {
   const { id } = user;
-  let userStorage: IUser[] = [];
-  try {
-    const stringifiedUsers = localStorage.getItem('userStorage');
-
-    if (stringifiedUsers !== null) {
-      userStorage = JSON.parse(stringifiedUsers);
-    }
-  } catch (e) {
-    userStorage = [];
-  }
+  const userStorage = getUserStorage();
 
   const userIndex = userStorage.findIndex((user) => user.id === id);
 

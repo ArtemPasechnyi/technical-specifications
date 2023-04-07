@@ -9,7 +9,6 @@ import {
   IUser,
   updateUser,
 } from '../../locaStorage';
-import { createUserStorage } from '../../locaStorage';
 import styles from './Formik.module.css';
 import { SelectView } from './SelectView';
 
@@ -27,16 +26,16 @@ const roleOptions = [
   { value: ERoles.DEVELOPER, label: 'Developer' },
 ];
 
-export interface EWorkBorders {
-  id: string;
-  name: string;
-}
-
 const workBordersOptions = [
   { value: { id: 1, name: 'Белгатой' }, label: 'Белгатой' },
   { value: { id: 2, name: 'Шали' }, label: 'Шали' },
   { value: { id: 3, name: 'Урус-Мартан' }, label: 'Урус-Мартан' },
 ];
+
+export interface EWorkBorders {
+  id: string;
+  name: string;
+}
 
 const validateString = (value: string, count: number) => {
   let error;
@@ -86,12 +85,12 @@ export const FormikCreateUser = () => {
     workBorders: [],
   };
 
-  const user = currentUser || clearUser;
+  const value = currentUser || clearUser;
 
   return (
     <>
       <Formik
-        initialValues={user}
+        initialValues={value}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             currentUser ? updateUser(values) : createUserStorage(values);
@@ -196,7 +195,7 @@ export const FormikCreateUser = () => {
                       variant="outline-primary"
                       size="sm"
                       onClick={() => {
-                        deleteUser(user.id);
+                        deleteUser(value.id);
                         routToMainPage();
                         enqueueSnackbar('Пользователь успешно удалён', {
                           variant: 'success',
