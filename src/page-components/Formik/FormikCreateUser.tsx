@@ -1,4 +1,3 @@
-import { Paper } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
@@ -9,15 +8,8 @@ import {
   IUser,
   updateUser,
 } from '../../locaStorage';
-import styles from './Formik.module.css';
+import { ERoles } from '../exportConst';
 import { SelectView } from './SelectView';
-
-export enum ERoles {
-  ANT = 'ant',
-  ANT_MANAGER = 'antManager',
-  ANT_OFFICER = 'antOfficer',
-  DEVELOPER = 'developer',
-}
 
 const roleOptions = [
   { value: ERoles.ANT, label: 'Ant' },
@@ -31,11 +23,6 @@ const workBordersOptions = [
   { value: { id: 2, name: 'Шали' }, label: 'Шали' },
   { value: { id: 3, name: 'Урус-Мартан' }, label: 'Урус-Мартан' },
 ];
-
-export interface EWorkBorders {
-  id: string;
-  name: string;
-}
 
 const validateString = (value: string, count: number) => {
   let error;
@@ -85,6 +72,8 @@ export const FormikCreateUser = () => {
     workBorders: [],
   };
 
+  const style = { maxWidth: '400px' }; //для контейнера
+
   const value = currentUser || clearUser;
 
   return (
@@ -108,112 +97,119 @@ export const FormikCreateUser = () => {
         }}
       >
         {({ errors, touched }) => (
-          <Paper className={styles.paper} variant="outlined">
-            <div className="container">
-              <div className="col-sm-12">
-                <h4>Форма создания юзера</h4>
-              </div>
-              <Form className="col-sm-12 d-flex flex-column gap-2">
-                <div className="form-group">
-                  <Field
-                    className="form-control"
-                    type="text"
-                    placeholder="Username"
-                    name="username"
-                    validate={(value: string) => validateString(value, 3)}
-                  />
-                  {errors.username &&
-                    touched.username &&
-                    errorComponent(errors.username)}
-                </div>
-                <div className="form-group">
-                  <Field
-                    className="form-control"
-                    type="text"
-                    placeholder="Имя"
-                    name="firstName"
-                    validate={(value: string) => validateString(value, 2)}
-                  />
-                  {errors.firstName &&
-                    touched.firstName &&
-                    errorComponent(errors.firstName)}
-                </div>
-                <div className="form-group">
-                  <Field
-                    className="form-control"
-                    type="text"
-                    placeholder="Фамилия"
-                    name="lastName"
-                  />
-                </div>
-                <div className="form-group">
-                  <Field
-                    className="custom-select"
-                    name="role"
-                    options={roleOptions}
-                    component={SelectView}
-                    placeholder="Роли"
-                    isMulti={true}
-                    validate={(value: string[]) => validateArr(value)}
-                  />
-                  {errors.role && touched.role && errorComponent(errors.role)}
-                </div>
-                <div className="form-group">
-                  <Field
-                    className="custom-select"
-                    name="workBorders"
-                    options={workBordersOptions}
-                    component={SelectView}
-                    placeholder="Место работы"
-                    isMulti={true}
-                    validate={(value: string[]) => validateArr(value)}
-                  />
-                  {errors.workBorders &&
-                    touched.workBorders &&
-                    errorComponent(errors.workBorders)}
-                </div>
-
-                <div className="form-group">
-                  <Field
-                    className="form-control"
-                    type="password"
-                    placeholder="Пароль"
-                    name="password"
-                    validate={(value: string) => validateString(value, 4)}
-                  />
-                  {errors.password &&
-                    touched.password &&
-                    errorComponent(errors.password)}
-                </div>
-
-                <div className="form-group d-flex justify-content-between">
-                  <Button variant="outline-primary" type="submit" size="sm">
-                    {currentUser ? 'Обновить' : 'Создать'}
-                  </Button>
-                  {currentUser && (
-                    <Button
-                      variant="outline-primary"
-                      size="sm"
-                      onClick={() => {
-                        deleteUser(value.id);
-                        routToMainPage();
-                        enqueueSnackbar('Пользователь успешно удалён', {
-                          variant: 'success',
-                        });
-                      }}
-                    >
-                      Удалить
-                    </Button>
-                  )}
-                  <Link to={`/`} style={{ float: 'right' }}>
-                    <Button variant="outline-primary" size="sm">
-                      Вернуться к списку
-                    </Button>
-                  </Link>
-                </div>
-              </Form>
+          <div className="container" style={style}>
+            <div className="col-sm-12">
+              <h4>Форма создания юзера</h4>
             </div>
-          </Paper>
+            <Form className="col-sm-12 d-flex flex-column gap-2">
+              <div className="form-group">
+                <Field
+                  className="form-control"
+                  type="text"
+                  placeholder="Username"
+                  name="username"
+                  validate={(value: string) => validateString(value, 3)}
+                />
+                {errors.username &&
+                  touched.username &&
+                  errorComponent(errors.username)}
+              </div>
+              <div className="form-group">
+                <Field
+                  className="form-control"
+                  type="text"
+                  placeholder="Имя"
+                  name="firstName"
+                  validate={(value: string) => validateString(value, 2)}
+                />
+                {errors.firstName &&
+                  touched.firstName &&
+                  errorComponent(errors.firstName)}
+              </div>
+              <div className="form-group">
+                <Field
+                  className="form-control"
+                  type="text"
+                  placeholder="Фамилия"
+                  name="lastName"
+                />
+              </div>
+              <div className="form-group">
+                <Field
+                  className="custom-select"
+                  name="role"
+                  options={roleOptions}
+                  component={SelectView}
+                  placeholder="Роли"
+                  isMulti={true}
+                  defaultValue={roleOptions.filter((roleOption) =>
+                    value.role.find((role: ERoles) => role === roleOption.value)
+                  )}
+                  validate={(value: string[]) => validateArr(value)}
+                />
+                {errors.role && touched.role && errorComponent(errors.role)}
+              </div>
+              <div className="form-group">
+                <Field
+                  className="custom-select"
+                  name="workBorders"
+                  options={workBordersOptions}
+                  component={SelectView}
+                  defaultValue={workBordersOptions.filter((workBordersOption) =>
+                    value.workBorders.find(
+                      (workBorder) =>
+                        workBorder.id === workBordersOption.value.id
+                    )
+                  )}
+                  placeholder="Место работы"
+                  isMulti={true}
+                  validate={(value: string[]) => validateArr(value)}
+                />
+                {errors.workBorders &&
+                  touched.workBorders &&
+                  errorComponent(errors.workBorders as string)}
+              </div>
+
+              <div className="form-group">
+                <Field
+                  className="form-control"
+                  type="password"
+                  placeholder="Пароль"
+                  name="password"
+                  validate={(value: string) => validateString(value, 4)}
+                />
+                {errors.password &&
+                  touched.password &&
+                  errorComponent(errors.password)}
+              </div>
+
+              <div className="form-group d-flex justify-content-between">
+                <Button variant="outline-primary" type="submit" size="sm">
+                  {currentUser ? 'Обновить' : 'Создать'}
+                </Button>
+                {currentUser && (
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => {
+                      deleteUser(value.id);
+                      routToMainPage();
+                      enqueueSnackbar('Пользователь успешно удалён', {
+                        variant: 'success',
+                      });
+                    }}
+                  >
+                    Удалить
+                  </Button>
+                )}
+                <Link to={`/`} style={{ float: 'right' }}>
+                  <Button variant="outline-primary" size="sm">
+                    Вернуться к списку
+                  </Button>
+                </Link>
+              </div>
+            </Form>
+          </div>
         )}
       </Formik>
     </>
