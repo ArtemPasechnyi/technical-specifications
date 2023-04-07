@@ -9,6 +9,7 @@ import {
   IUser,
   updateUser,
 } from '../../locaStorage';
+import { createUserStorage } from '../../locaStorage';
 import styles from './Formik.module.css';
 import { SelectView } from './SelectView';
 
