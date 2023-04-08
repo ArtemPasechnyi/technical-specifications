@@ -15,6 +15,7 @@ export const CartItem = (props: ICartUser) => {
     <Card style={{ width: '18rem', margin: '20px' }}>
       <Card.Body>
         <Card.Title>Карточка юзера №{id}</Card.Title>
+        <hr />
         <Card.Text>
           <strong>Username: </strong>
           {username}
@@ -23,10 +24,13 @@ export const CartItem = (props: ICartUser) => {
           <strong>Имя: </strong>
           {firstName}
         </Card.Text>
-        <Card.Text>
-          <strong>Фамилия: </strong>
-          {lastName}
-        </Card.Text>
+        {lastName && (
+          <Card.Text>
+            <strong>Фамилия: </strong>
+            {lastName}
+          </Card.Text>
+        )}
+
         <Link to={`/form?id=${id}`} style={{ float: 'right' }}>
           <Button variant="outline-primary" size="sm">
             Обновить

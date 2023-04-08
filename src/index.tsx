@@ -7,6 +7,18 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SnackbarProvider } from 'notistack';
 import { getUserById } from './locaStorage';
+import { ApolloProvider } from '@apollo/client';
+import { GET_ALL_USERS } from './page-components/common/method';
+import { client } from './page-components/common/createCache';
+
+const cache = client;
+
+cache.writeQuery({
+  query: GET_ALL_USERS,
+  data: {
+    users: [],
+  },
+});
 
 const loader = (props: any) => {
   const { request } = props;
@@ -27,9 +39,11 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <SnackbarProvider maxSnack={5} autoHideDuration={4000}>
-      <RouterProvider router={router} />
-    </SnackbarProvider>
+    <ApolloProvider client={client}>
+      <SnackbarProvider maxSnack={5} autoHideDuration={4000}>
+        <RouterProvider router={router} />
+      </SnackbarProvider>
+    </ApolloProvider>
   </React.StrictMode>
 );
 

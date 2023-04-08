@@ -1,14 +1,18 @@
+import { useMutation, useQuery } from '@apollo/client';
+import { CircularProgress } from '@mui/material';
 import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
+import { IUser } from '../../locaStorage';
 import {
-  createUserStorage,
-  deleteUser,
-  IUser,
-  updateUser,
-} from '../../locaStorage';
+  CREATE_USER,
+  DELETE_USER,
+  GET_USER_BY_ID,
+  UPDATE_USER,
+} from '../common/method';
 import { ERoles } from '../exportConst';
+import { validateArr, validateString } from './ErrorComponent';
 import { SelectView } from './SelectView';
 
 const roleOptions = [
@@ -24,39 +28,26 @@ const workBordersOptions = [
   { value: { id: 3, name: 'Урус-Мартан' }, label: 'Урус-Мартан' },
 ];
 
-const validateString = (value: string, count: number) => {
-  let error;
-  switch (true) {
-    case !value:
-      error = 'Обязательное поле';
-      break;
-    case value.length < count:
-      error = `Минимальное ко-во символов ${count}`;
-      break;
-  }
-
-  return error;
-};
-
-const validateArr = (value: string[]) => {
-  let error;
-  if (!value.length) {
-    error = 'Обязательное поле';
-  }
-
-  return error;
-};
-
 const errorComponent = (error: string | string[]) => {
   return <div className="invalid-feedback d-block">{error}</div>;
 };
 
 interface ICurrenUser {
-  currentUser: IUser;
+  userId: number;
 }
 
 export const FormikCreateUser = () => {
-  const { currentUser } = useLoaderData() as ICurrenUser;
+  const { userId } = useLoaderData() as ICurrenUser;
+
+  const { data, loading, error } = useQuery(GET_USER_BY_ID, {
+    variables: { userId },
+  });
+  const currentUser = data?.getUserById;
+
+  const [createUser] = useMutation(CREATE_USER);
+  const [updateUser] = useMutation(UPDATE_USER);
+  const [deleteUser] = useMutation(DELETE_USER);
+
   const rout = useNavigate();
   const routToMainPage = () => {
     rout('/');
@@ -74,7 +65,17 @@ export const FormikCreateUser = () => {
 
   const style = { maxWidth: '400px' }; //для контейнера
 
-  const value = currentUser || clearUser;
+  const value: IUser = currentUser || clearUser;
+
+  const currentUserId = currentUser?.id;
+
+  if (loading) {
+    return <CircularProgress />;
+  }
+
+  if (error) {
+    return <div>Ошибка!!!</div>;
+  }
 
   return (
     <>
@@ -82,7 +83,9 @@ export const FormikCreateUser = () => {
         initialValues={value}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
-            currentUser ? updateUser(values) : createUserStorage(values);
+            currentUser
+              ? updateUser({ variables: { values } })
+              : createUser({ variables: { values } });
             routToMainPage();
             enqueueSnackbar(
               currentUser
@@ -112,7 +115,7 @@ export const FormikCreateUser = () => {
                 />
                 {errors.username &&
                   touched.username &&
-                  errorComponent(errors.username)}
+                  errorComponent(errors.username as string)}
               </div>
               <div className="form-group">
                 <Field
@@ -124,7 +127,7 @@ export const FormikCreateUser = () => {
                 />
                 {errors.firstName &&
                   touched.firstName &&
-                  errorComponent(errors.firstName)}
+                  errorComponent(errors.firstName as string)}
               </div>
               <div className="form-group">
                 <Field
@@ -147,7 +150,9 @@ export const FormikCreateUser = () => {
                   )}
                   validate={(value: string[]) => validateArr(value)}
                 />
-                {errors.role && touched.role && errorComponent(errors.role)}
+                {errors.role &&
+                  touched.role &&
+                  errorComponent(errors.role as string)}
               </div>
               <div className="form-group">
                 <Field
@@ -157,7 +162,7 @@ export const FormikCreateUser = () => {
                   component={SelectView}
                   defaultValue={workBordersOptions.filter((workBordersOption) =>
                     value.workBorders.find(
-                      (workBorder) =>
+                      (workBorder: any) =>
                         workBorder.id === workBordersOption.value.id
                     )
                   )}
@@ -180,7 +185,7 @@ export const FormikCreateUser = () => {
                 />
                 {errors.password &&
                   touched.password &&
-                  errorComponent(errors.password)}
+                  errorComponent(errors.password as string)}
               </div>
 
               <div className="form-group d-flex justify-content-between">
@@ -192,7 +197,10 @@ export const FormikCreateUser = () => {
                     variant="outline-primary"
                     size="sm"
                     onClick={() => {
-                      deleteUser(value.id);
+                      deleteUser({
+                        variables: { userId: currentUserId },
+                      });
+
                       routToMainPage();
                       enqueueSnackbar('Пользователь успешно удалён', {
                         variant: 'success',
