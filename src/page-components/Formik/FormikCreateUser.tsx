@@ -4,33 +4,16 @@ import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { IUser } from '../common/createCache';
+import { IUser } from '../CartUser/CartItem';
 import {
   CREATE_USER,
   DELETE_USER,
   GET_USER_BY_ID,
   UPDATE_USER,
 } from '../common/method';
-import { ERoles } from '../exportConst';
-import { validateArr, validateString } from './ErrorComponent';
+import { ERoles, roleOptions, workBordersOptions } from '../exportConst';
+import { errorComponent, validateArr, validateString } from './ErrorComponent';
 import { SelectView } from './SelectView';
-
-const roleOptions = [
-  { value: ERoles.ANT, label: 'Ant' },
-  { value: ERoles.ANT_MANAGER, label: 'Ant Manager' },
-  { value: ERoles.ANT_OFFICER, label: 'Ant Officer' },
-  { value: ERoles.DEVELOPER, label: 'Developer' },
-];
-
-const workBordersOptions = [
-  { value: { id: 1, name: 'Белгатой' }, label: 'Белгатой' },
-  { value: { id: 2, name: 'Шали' }, label: 'Шали' },
-  { value: { id: 3, name: 'Урус-Мартан' }, label: 'Урус-Мартан' },
-];
-
-const errorComponent = (error: string) => {
-  return <div className="invalid-feedback d-block">{error}</div>;
-};
 
 interface ICurrenUserProps {
   userId: number;
@@ -45,16 +28,13 @@ export const FormikCreateUser = () => {
   const currentUser = data?.getUserById;
 
   const rout = useNavigate();
-  const routToMainPage = () => {
-    rout('/');
-  };
 
   const clearUser: IUser = {
-    username: '',
+    userName: '',
     password: '',
     firstName: '',
     lastName: '',
-    role: [ERoles.ANT],
+    roles: [ERoles.ANT],
     id: 1,
     workBorders: [],
   };
@@ -73,8 +53,7 @@ export const FormikCreateUser = () => {
     deleteUser({
       variables: { userId: currentUserId },
     });
-
-    routToMainPage();
+    rout('/');
     enqueueSnackbar('Пользователь успешно удалён', {
       variant: 'success',
     });
@@ -88,12 +67,12 @@ export const FormikCreateUser = () => {
     <>
       <Formik
         initialValues={user}
-        onSubmit={(values, { setSubmitting }) => {
+        onSubmit={(user, { setSubmitting }) => {
           setTimeout(() => {
             currentUser
-              ? updateUser({ variables: { values } })
-              : createUser({ variables: { values } });
-            routToMainPage();
+              ? updateUser({ variables: { user } })
+              : createUser({ variables: { user } });
+            rout('/');
             enqueueSnackbar(
               currentUser
                 ? 'Профиль успешно обновлен'
@@ -117,12 +96,12 @@ export const FormikCreateUser = () => {
                   className="form-control"
                   type="text"
                   placeholder="Username"
-                  name="username"
+                  name="userName"
                   validate={(value: string) => validateString(value, 3)}
                 />
-                {errors.username &&
-                  touched.username &&
-                  errorComponent(errors.username as string)}
+                {errors.userName &&
+                  touched.userName &&
+                  errorComponent(errors.userName as string)}
               </div>
               <div className="form-group">
                 <Field
@@ -147,19 +126,21 @@ export const FormikCreateUser = () => {
               <div className="form-group">
                 <Field
                   className="custom-select"
-                  name="role"
+                  name="roles"
                   options={roleOptions}
                   component={SelectView}
                   placeholder="Роли"
                   isMulti={true}
                   defaultValue={roleOptions.filter((roleOption) =>
-                    user.role.find((role: ERoles) => role === roleOption.value)
+                    user.roles.find(
+                      (roles: ERoles) => roles === roleOption.value
+                    )
                   )}
                   validate={(value: string[]) => validateArr(value)}
                 />
-                {errors.role &&
-                  touched.role &&
-                  errorComponent(errors.role as string)}
+                {errors.roles &&
+                  touched.roles &&
+                  errorComponent(errors.roles as string)}
               </div>
               <div className="form-group">
                 <Field

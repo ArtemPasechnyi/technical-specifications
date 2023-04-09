@@ -20,3 +20,7 @@ export const validateArr = (value: string[]) => {
 
   return error;
 };
+
+export const errorComponent = (error: string) => {
+  return <div className="invalid-feedback d-block">{error}</div>;
+};

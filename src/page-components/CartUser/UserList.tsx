@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { CartItem } from './CartItem';
+import { CartItem, IUser } from './CartItem';
 import { Search } from './Search';
 import styles from './Cart.module.css';
 import { gql, useQuery } from '@apollo/client';
-import { IUser } from '../common/createCache';
 
 const GET_ALL_USERS = gql`
   query getAllUsers {
@@ -20,13 +19,20 @@ const GET_ALL_USERS = gql`
 
 export const UserList = () => {
   const { data } = useQuery(GET_ALL_USERS);
-  const { users } = data;
   const [query, setQuery] = useState<string>('');
-  const searchUsers = (users as IUser[]).filter((value: any) =>
+  const searchUsers = (data.users as IUser[]).filter((value: any) =>
     value.firstName.toLowerCase().startsWith(query.toLowerCase())
   );
 
-  return (
+  return !data.users.length ? (
+    <div className={styles.root}>
+      <h2 className={styles.item}>Список пользователей пустой</h2>
+      <h4 className={styles.item}>Хотите добавить?</h4>
+      <Link to={`/form`} className={styles.item}>
+        <Button>Добавить нового пользователя</Button>
+      </Link>
+    </div>
+  ) : (
     <div className={styles.listRoot}>
       <Link to={`/form`}>
         <Button>Добавить нового пользователя</Button>

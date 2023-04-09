@@ -1,15 +1,24 @@
 import { Button } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
-import { IUser } from '../../locaStorage';
+import { ERoles, IWorkBorders } from '../exportConst';
 
+export interface IUser {
+  userName: string;
+  password: string;
+  firstName: string;
+  lastName?: string;
+  roles: ERoles[];
+  workBorders: IWorkBorders[];
+  id: number;
+}
 interface ICartItemProps {
   user: IUser;
 }
 
 export const CartItem = (props: ICartItemProps) => {
   const { user } = props;
-  const { firstName, lastName, username, id } = user;
+  const { firstName, lastName, userName, id } = user;
 
   return (
     <Card style={{ width: '18rem', margin: '20px' }}>
@@ -18,7 +27,7 @@ export const CartItem = (props: ICartItemProps) => {
         <hr />
         <Card.Text>
           <strong>Username: </strong>
-          {username}
+          {userName}
         </Card.Text>
         <Card.Text>
           <strong>Имя: </strong>
@@ -31,7 +40,7 @@ export const CartItem = (props: ICartItemProps) => {
           </Card.Text>
         )}
 
-        <Link to={`/form?id=${id}`} style={{ float: 'right' }}>
+        <Link to={`/form?id=${id}`}>
           <Button variant="outline-primary" size="sm">
             Обновить
           </Button>

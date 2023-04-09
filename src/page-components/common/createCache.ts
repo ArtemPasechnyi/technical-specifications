@@ -1,64 +1,58 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
-import { ERoles, IWorkBorders } from '../exportConst';
+import { IUser } from '../CartUser/CartItem';
 import { GET_ALL_USERS } from './method';
 
-export interface IUser {
-  username: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  role: ERoles[];
-  workBorders: IWorkBorders[];
-  id: number;
-}
-
-const cache = new InMemoryCache();
 export const client = new ApolloClient({
-  cache,
+  cache: new InMemoryCache(),
   resolvers: {
     Mutation: {
-      createUser: (variables, { cache }) => {
+      createUser: (_, variables, { cache }) => {
         const { user } = variables;
-        const { users } = cache.readQuery({ GET_ALL_USERS });
-        user.id = !users.length ? 1 : users[0]?.id;
+        const query = GET_ALL_USERS;
+        const { users } = cache.readQuery({ query });
+        user.id = !users.length ? 1 : users[0].id + 1;
+        const data = { users: [user, ...users] };
 
-        cache.writeQuery({ GET_ALL_USERS, users: [user, ...users] });
+        cache.writeQuery({ query, data });
 
-        return null;
+        return data;
       },
-      deleteUser: (variables, { cache }) => {
+
+      deleteUser: (_, variables, { cache }) => {
         const { id } = variables;
-        const { users } = cache.readQuery({ GET_ALL_USERS });
+        const query = GET_ALL_USERS;
+        const { users } = cache.readQuery({ query });
         const userIndex = users.findIndex((user: IUser) => user.id === id);
-
         const newUsers = [...users];
-
         newUsers.splice(userIndex, 1);
+        const data = { users: [...newUsers] };
 
-        cache.writeQuery({ GET_ALL_USERS, users: [...newUsers] });
+        cache.writeQuery({ query, data });
 
-        return null;
+        return data;
       },
-      updateUser: (variables, { cache }) => {
+
+      updateUser: (_, variables, { cache }) => {
         const { user } = variables;
         const { id } = user;
-        const { users } = cache.readQuery({ GET_ALL_USERS });
-
+        const query = GET_ALL_USERS;
+        const { users } = cache.readQuery({ query });
         const newUsers = [...users];
-
         const userIndex = users.findIndex((user: IUser) => user.id === id);
-
         newUsers[userIndex] = user;
 
-        cache.writeQuery({ GET_ALL_USERS, users: [...newUsers] });
+        const data = { users: [...newUsers] };
 
-        return null;
+        cache.writeQuery({ query, data });
+
+        return data;
       },
     },
     Query: {
-      getUserById: (variables, { cache }) => {
+      getUserById: (_, variables, { cache }) => {
         const { id } = variables;
-        const { users } = cache.readQuery({ GET_ALL_USERS });
+        const query = GET_ALL_USERS;
+        const { users } = cache.readQuery({ query });
         const userIndex = users.findIndex((user: IUser) => user.id === id);
 
         return users[userIndex];
