@@ -4,7 +4,7 @@ import { Formik, Form, Field } from 'formik';
 import { enqueueSnackbar } from 'notistack';
 import { Button } from 'react-bootstrap';
 import { Link, useLoaderData, useNavigate } from 'react-router-dom';
-import { IUser } from '../../locaStorage';
+import { IUser } from '../common/createCache';
 import {
   CREATE_USER,
   DELETE_USER,
@@ -28,25 +28,21 @@ const workBordersOptions = [
   { value: { id: 3, name: 'Урус-Мартан' }, label: 'Урус-Мартан' },
 ];
 
-const errorComponent = (error: string | string[]) => {
+const errorComponent = (error: string) => {
   return <div className="invalid-feedback d-block">{error}</div>;
 };
 
-interface ICurrenUser {
+interface ICurrenUserProps {
   userId: number;
 }
 
 export const FormikCreateUser = () => {
-  const { userId } = useLoaderData() as ICurrenUser;
+  const { userId } = useLoaderData() as ICurrenUserProps;
 
-  const { data, loading, error } = useQuery(GET_USER_BY_ID, {
+  const { data, loading } = useQuery(GET_USER_BY_ID, {
     variables: { userId },
   });
   const currentUser = data?.getUserById;
-
-  const [createUser] = useMutation(CREATE_USER);
-  const [updateUser] = useMutation(UPDATE_USER);
-  const [deleteUser] = useMutation(DELETE_USER);
 
   const rout = useNavigate();
   const routToMainPage = () => {
@@ -65,22 +61,33 @@ export const FormikCreateUser = () => {
 
   const style = { maxWidth: '400px' }; //для контейнера
 
-  const value: IUser = currentUser || clearUser;
+  const user: IUser = currentUser || clearUser;
 
   const currentUserId = currentUser?.id;
+
+  const [createUser] = useMutation(CREATE_USER);
+  const [updateUser] = useMutation(UPDATE_USER);
+  const [deleteUser] = useMutation(DELETE_USER);
+
+  const handleDelete = () => {
+    deleteUser({
+      variables: { userId: currentUserId },
+    });
+
+    routToMainPage();
+    enqueueSnackbar('Пользователь успешно удалён', {
+      variant: 'success',
+    });
+  };
 
   if (loading) {
     return <CircularProgress />;
   }
 
-  if (error) {
-    return <div>Ошибка!!!</div>;
-  }
-
   return (
     <>
       <Formik
-        initialValues={value}
+        initialValues={user}
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             currentUser
@@ -146,7 +153,7 @@ export const FormikCreateUser = () => {
                   placeholder="Роли"
                   isMulti={true}
                   defaultValue={roleOptions.filter((roleOption) =>
-                    value.role.find((role: ERoles) => role === roleOption.value)
+                    user.role.find((role: ERoles) => role === roleOption.value)
                   )}
                   validate={(value: string[]) => validateArr(value)}
                 />
@@ -161,7 +168,7 @@ export const FormikCreateUser = () => {
                   options={workBordersOptions}
                   component={SelectView}
                   defaultValue={workBordersOptions.filter((workBordersOption) =>
-                    value.workBorders.find(
+                    user.workBorders.find(
                       (workBorder: any) =>
                         workBorder.id === workBordersOption.value.id
                     )
@@ -196,16 +203,7 @@ export const FormikCreateUser = () => {
                   <Button
                     variant="outline-primary"
                     size="sm"
-                    onClick={() => {
-                      deleteUser({
-                        variables: { userId: currentUserId },
-                      });
-
-                      routToMainPage();
-                      enqueueSnackbar('Пользователь успешно удалён', {
-                        variant: 'success',
-                      });
-                    }}
+                    onClick={handleDelete}
                   >
                     Удалить
                   </Button>

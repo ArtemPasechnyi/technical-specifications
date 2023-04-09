@@ -5,7 +5,7 @@ export enum ERoles {
   DEVELOPER = 'developer',
 }
 
-export interface EWorkBorders {
+export interface IWorkBorders {
   id: number;
   name: string;
 }

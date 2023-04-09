@@ -6,12 +6,11 @@ import { FormikCreateUser } from './page-components/Formik/FormikCreateUser';
 import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { SnackbarProvider } from 'notistack';
-import { getUserById } from './locaStorage';
 import { ApolloProvider } from '@apollo/client';
 import { GET_ALL_USERS } from './page-components/common/method';
 import { client } from './page-components/common/createCache';
 
-const cache = client;
+const { cache } = client;
 
 cache.writeQuery({
   query: GET_ALL_USERS,
@@ -22,11 +21,11 @@ cache.writeQuery({
 
 const loader = (props: any) => {
   const { request } = props;
-  const url = new URL(request.url);
-  const id = Number(url.searchParams.get('id'));
-  const currentUser = getUserById(id);
+  const { url } = request;
+  const urlID = new URL(url);
+  const userId = Number(urlID.searchParams.get('id'));
 
-  return { currentUser };
+  return { userId };
 };
 
 const router = createBrowserRouter([

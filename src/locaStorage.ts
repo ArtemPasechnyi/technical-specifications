@@ -1,4 +1,4 @@
-import { ERoles, EWorkBorders } from './page-components/exportConst';
+import { ERoles, IWorkBorders } from './page-components/exportConst';
 
 export interface IUser {
   username: string;
@@ -6,7 +6,7 @@ export interface IUser {
   firstName: string;
   lastName: string;
   role: ERoles[];
-  workBorders: EWorkBorders[];
+  workBorders: IWorkBorders[];
   id: number;
 }
 

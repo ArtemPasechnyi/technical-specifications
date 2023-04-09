@@ -3,11 +3,11 @@ import Card from 'react-bootstrap/Card';
 import { Link } from 'react-router-dom';
 import { IUser } from '../../locaStorage';
 
-interface ICartUser {
+interface ICartItemProps {
   user: IUser;
 }
 
-export const CartItem = (props: ICartUser) => {
+export const CartItem = (props: ICartItemProps) => {
   const { user } = props;
   const { firstName, lastName, username, id } = user;
 
